@@ -16,10 +16,6 @@
 
   :clean-targets ^{:protect false} ["target"]
 
-  :build {
-
-          }
-
   :cljsbuild {
               :builds [{:id "server-dev"
                         :source-paths ["server_src"]
