@@ -11,3 +11,6 @@ pom.xml
 .DS_Store
 figwheel_server.log
 node_modules/
+.idea/
+cryptocoin.iml
+.lein-failures

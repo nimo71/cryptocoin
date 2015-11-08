@@ -2,8 +2,13 @@
 
 ## Overview
 
-## Setup
+## Setup & Run
 
+###Clojure
+
+lein run
+
+###Clojurescript
 
 Terminal 1...
 

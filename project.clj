@@ -5,7 +5,8 @@
                  [org.clojure/clojurescript "1.7.145" 
                   :classifier "aot"
                   :exclusion [org.clojure/data.json]]
-                 [org.clojure/data.json "0.2.6" :classifier "aot"]]
+                 [org.clojure/data.json "0.2.6" :classifier "aot"]
+                 [http-kit "2.1.18"]]
 
   :node-dependencies [[source-map-support "0.2.8"]
                       [autobahn "0.9.8"]]
@@ -14,6 +15,10 @@
             [lein-figwheel "0.3.9"]]
 
   :clean-targets ^{:protect false} ["target"]
+
+  :build {
+
+          }
 
   :cljsbuild {
               :builds [{:id "server-dev"
@@ -25,4 +30,7 @@
                                    :target :nodejs
                                    :optimizations :none
                                    :source-map true }}]}
-  :figwheel {})
+  :figwheel {}
+
+  :main cryptocoin.core)
+
