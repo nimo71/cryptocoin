@@ -5,9 +5,7 @@
 (defn- getPoloniex [command]
   (let [res (http/get (str "https://poloniex.com/public?command=" command))]
     (if (= 200 (:status @res))
-
       (json/read-str (:body @res) :key-fn keyword)
-
       (:status @res))))
 
 (defn returnTicker []

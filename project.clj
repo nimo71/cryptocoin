@@ -6,6 +6,7 @@
                   :classifier "aot"
                   :exclusion [org.clojure/data.json]]
                  [org.clojure/data.json "0.2.6" :classifier "aot"]
+                 [org.clojure/core.async "0.2.371"]
                  [http-kit "2.1.18"]]
 
   :node-dependencies [[source-map-support "0.2.8"]
