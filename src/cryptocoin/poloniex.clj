@@ -1,15 +1,35 @@
 (ns cryptocoin.poloniex
   (:require [org.httpkit.client :as http]
-            [clojure.data.json :as json]))
+            [clojure.data.json :as json]
+            [clojure.core.async :refer :all]))
 
-(defn- getPoloniex [command]
-  (let [res (http/get (str "https://poloniex.com/public?command=" command))]
-    (if (= 200 (:status @res))
-      (json/read-str (:body @res) :key-fn keyword)
-      (:status @res))))
+(defn- OK [status]
+  (= 200 status))
 
-(defn returnTicker []
-  (getPoloniex "returnTicker"))
+(defn- success [{:keys [error status]}]
+  (and (not error) (OK status)))
 
-(defn returnCurrencies []
-  (getPoloniex "returnCurrencies"))
+(defn- get-poloniex-channel [command period-ms]
+  (let [url    (str "https://poloniex.com/public?command=" command)
+        ticker (chan)]
+
+    (go-loop [start-time              (System/currentTimeMillis)
+              {:keys [body] :as res}  @(http/get url {:timeout period-ms})
+              end-time                (System/currentTimeMillis)]
+
+      (let [response-time     (- end-time start-time)
+            period-remaining  (- period-ms response-time)]
+        (when (> period-remaining 0)
+          (<! (timeout period-remaining))))
+
+      (if (success res)
+        (>! ticker (json/read-str body :key-fn keyword))
+        (println "Error durning GET: " url))
+
+      (recur (System/currentTimeMillis)
+             @(http/get url {:timeout period-ms})
+             (System/currentTimeMillis)))
+    ticker))
+
+(defn returnTicker-channel [period-ms]
+  (get-poloniex-channel "returnTicker" period-ms))
