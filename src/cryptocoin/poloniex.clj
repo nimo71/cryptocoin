@@ -9,9 +9,8 @@
 (defn- success [{:keys [error status]}]
   (and (not error) (OK status)))
 
-(defn- get-poloniex-channel [command period-ms]
-  (let [url    (str "https://poloniex.com/public?command=" command)
-        ticker (chan)]
+(defn- get-poloniex [channel command period-ms]
+  (let [url    (str "https://poloniex.com/public?command=" command)]
 
     (go-loop [start-time              (System/currentTimeMillis)
               {:keys [body] :as res}  @(http/get url {:timeout period-ms})
@@ -23,13 +22,18 @@
           (<! (timeout period-remaining))))
 
       (if (success res)
-        (>! ticker (json/read-str body :key-fn keyword))
+        (>! channel {:poloniex (keyword command)
+                     :markets  (json/read-str body :key-fn keyword)})
         (println "Error durning GET: " url))
 
       (recur (System/currentTimeMillis)
              @(http/get url {:timeout period-ms})
              (System/currentTimeMillis)))
-    ticker))
 
-(defn returnTicker-channel [period-ms]
-  (get-poloniex-channel "returnTicker" period-ms))
+    (pub channel :poloniex)))
+
+(defn returnTicker [channel period-ms]
+  (get-poloniex channel "returnTicker" period-ms))
+
+
+;; TODO: add error to channel, subscribe to error channel elsewhere
