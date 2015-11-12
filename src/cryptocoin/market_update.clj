@@ -16,11 +16,13 @@
       (doseq [[currency-pair market-value] (:value new-markets)]
         (when (price-changed? currency-pair market-value)
 
-          (>! market-update-chan {:market-update :price-change
-                                  :value         {:pair      currency-pair
-                                                  :from      (-> @markets currency-pair :last)
-                                                  :to        (:last market-value)
-                                                  :timestamp (System/currentTimeMillis)}})
+          (when-let [from (-> @markets currency-pair :last)]
+
+            (>! market-update-chan {:market-update :price-change
+                                    :value         {:pair      currency-pair
+                                                    :from      from
+                                                    :to        (:last market-value)
+                                                    :timestamp (System/currentTimeMillis)}}))
 
           (swap! markets assoc-in [currency-pair] market-value)))
 

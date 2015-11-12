@@ -37,6 +37,3 @@
 
 (defn returnTicker [period-ms]
   (get-poloniex "returnTicker" period-ms))
-
-
-;; TODO: add error to channel, subscribe to error channel elsewhere
