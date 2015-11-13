@@ -15,7 +15,6 @@
     (go-loop [new-markets (<! chan-markets)]
       (doseq [[currency-pair market-value] (:value new-markets)]
         (when (price-changed? currency-pair market-value)
-
           (when-let [from (-> @markets currency-pair :last)]
 
             (>! market-update-chan {:market-update :price-change
