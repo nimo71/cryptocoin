@@ -6,6 +6,23 @@
 
 (def every-second 1000)
 
+(defn print-price-change [price-change-chan]
+  (go-loop [price-change (:value (<! price-change-chan))]
+
+    (when-let [from (read-string (:from price-change))]
+      (let [pair (:pair price-change)
+            to (read-string (:to price-change))
+            diff (- to from)]
+
+        (println pair "price changed, from:" from ", to:" to ", diff:" diff)))
+
+    (recur (:value (<! price-change-chan)))))
+
+(defn print-price-history [price-history-chan]
+  (go-loop [price-history (<! price-history-chan)]
+    (println price-history)
+    (recur (<! price-history-chan))))
+
 (defn -main [& args]
   (println "Starting...")
 
@@ -23,20 +40,9 @@
     (sub pub-error :returnTicker returnTicker-error-chan)
     (sub pub-market-update :price-change price-change-chan)
 
-    (comment go-loop [price-change (:value (<! price-change-chan))]
+    (comment print-price-change price-change-chan)
 
-      (when-let [from (read-string (:from price-change))]
-        (let [pair (:pair price-change)
-              to (read-string (:to price-change))
-              diff (- to from)]
-
-          (println pair "price changed, from:" from ", to:" to ", diff:" diff)))
-
-      (recur (:value (<! price-change-chan))))
-
-    (go-loop [price-history (<! price-history-chan)]
-      (println price-history)
-      (recur (<! price-history-chan))))
+    (print-price-history price-history-chan))
 
   (println "Ctrl-C to finish")
   (loop [] (recur)))
