@@ -16,15 +16,14 @@
         returnTicker-error-chan (chan)
         market-update-chan      (market/market-update returnTicker-chan)
         pub-market-update       (pub market-update-chan :market-update)
-        price-change-chan       (chan)]
+        price-change-chan       (chan)
+        price-history-chan      (price-history/update market-update-chan)]
 
     (sub pub-markets :returnTicker returnTicker-chan)
     (sub pub-error :returnTicker returnTicker-error-chan)
     (sub pub-market-update :price-change price-change-chan)
 
-    (price-history/update market-update-chan)
-
-    (go-loop [price-change (:value (<! price-change-chan))]
+    (comment go-loop [price-change (:value (<! price-change-chan))]
 
       (when-let [from (read-string (:from price-change))]
         (let [pair (:pair price-change)
@@ -33,7 +32,11 @@
 
           (println pair "price changed, from:" from ", to:" to ", diff:" diff)))
 
-      (recur (:value (<! price-change-chan)))))
+      (recur (:value (<! price-change-chan))))
+
+    (go-loop [price-history (<! price-history-chan)]
+      (println price-history)
+      (recur (<! price-history-chan))))
 
   (println "Ctrl-C to finish")
   (loop [] (recur)))
