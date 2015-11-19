@@ -7,7 +7,11 @@
                   :exclusion [org.clojure/data.json]]
                  [org.clojure/data.json "0.2.6" :classifier "aot"]
                  [org.clojure/core.async "0.2.371"]
-                 [http-kit "2.1.18"]]
+                 [http-kit "2.1.18"]
+                 [ws.wamp.jawampa/jawampa-core "0.4.1"]
+                 [ws.wamp.jawampa/jawampa-netty "0.4.1"]
+                 [io.reactivex/rxjava "1.0.16"]]
+
 
   :node-dependencies [[source-map-support "0.2.8"]
                       [autobahn "0.9.8"]]

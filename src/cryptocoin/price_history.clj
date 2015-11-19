@@ -12,16 +12,15 @@
 
     (go-loop [price-update (<! price-update-chan)]
 
-      (let [{:keys [pair from to timestamp]} (:value price-update)
-            from-amt (read-string from)
-            to-amt (read-string to)
-            diff (- to-amt from-amt)
-            percent (/ (* diff 100) from-amt)]
+      (let [{:keys [currencyPair percentChange last]} (:value price-update)
+            amount          (read-string last)
+            percent         (read-string percentChange)
+            history-record  {:price          amount
+                             :percentChange  percent
+                             :timestamp      (System/currentTimeMillis)}]
 
-        (swap! history update-in [pair] #(prepend-history {:diff      diff
-                                                           :timestamp timestamp
-                                                           :percent   percent} %))
-        (>! price-history-chan {pair (pair @history)}))
+        (swap! history update-in [currencyPair] #(prepend-history history-record %))
+        (>! price-history-chan {currencyPair (get @history currencyPair)}))
 
       (recur (<! price-update-chan)))
 
