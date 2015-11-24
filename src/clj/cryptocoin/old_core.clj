@@ -1,4 +1,4 @@
-(ns cryptocoin.core
+(ns cryptocoin.old-core
   (:require [clojure.core.async :refer :all]
             [cryptocoin.price-history :as price-history]
             [cryptocoin.jawampa :as websocket]))
@@ -12,7 +12,7 @@
 
       (println pair "price changed by" percent-diff "% in" time-sec "sec"))
 
-    (println "price-history:" price-history)
+    (println (str price-history))
 
     (recur (<! price-history-chan))))
 

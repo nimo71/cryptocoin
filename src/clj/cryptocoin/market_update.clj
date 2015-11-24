@@ -4,6 +4,8 @@
 
 (def markets (atom {}))
 
+(defrecord PriceChange [pair from to timestamp])
+
 (defn price-changed? [currency-pair market-value]
   (let [last-price (-> @markets currency-pair :last)
         new-price  (:last market-value)]
@@ -18,10 +20,10 @@
           (when-let [from (-> @markets currency-pair :last)]
 
             (>! market-update-chan {:market-update :price-change
-                                    :value         {:pair      currency-pair
-                                                    :from      from
-                                                    :to        (:last market-value)
-                                                    :timestamp (System/currentTimeMillis)}}))
+                                    :value         (map->PriceChange {:pair      currency-pair
+                                                                      :from      from
+                                                                      :to        (:last market-value)
+                                                                      :timestamp (System/currentTimeMillis)})}))
 
           (swap! markets assoc-in [currency-pair] market-value)))
 

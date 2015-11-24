@@ -14,3 +14,7 @@ node_modules/
 .idea/
 cryptocoin.iml
 .lein-failures
+/*.log
+/*-init.clj
+/resources/public/js/compiled
+/resources/public/css/
